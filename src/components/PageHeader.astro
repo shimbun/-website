@@ -1,0 +1,26 @@
+---
+/**
+ * 下層ページ共通ヘッダー：パンくず → 英字ラベル → H1 → 1行要約（仕様書 4-4「現在地」）
+ */
+interface Crumb { label: string; href?: string }
+interface Props { title: string; eyebrow?: string; summary?: string; crumbs: Crumb[] }
+const { title, eyebrow, summary, crumbs } = Astro.props;
+---
+<div class="page-header">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="/">トップ</a></li>
+        {crumbs.map((c, i) =>
+          i === crumbs.length - 1 || !c.href
+            ? <li aria-current="page">{c.label}</li>
+            : <li><a href={c.href}>{c.label}</a></li>
+        )}
+      </ol>
+    </nav>
+    {eyebrow && <p class="eyebrow mt-1">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {summary && <p class="page-header__summary">{summary}</p>}
+    <slot />
+  </div>
+</div>

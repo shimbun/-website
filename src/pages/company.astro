@@ -1,0 +1,22 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site, tbd } from '../config/site';
+const o = site.operator;
+const rows: [string, string][] = [
+  ['サービス名', site.name],
+  ['運営', o.name],
+  ['代表者', o.representative],
+  ['所在地', o.address],
+  ['設立', o.established],
+  ['事業内容', o.business],
+  ['お問い合わせ', o.email],
+  ['相談形式・対応エリア', `${site.consultation.format}／${site.consultation.area}`],
+];
+---
+<LegalLayout title="運営者情報｜COMPASS 中学受験コンサルタント" description="COMPASS 中学受験コンサルタントの運営者情報です。" h1="運営者情報" review={false}
+  summary="COMPASS 中学受験コンサルタントを運営する事業者の情報です。「COMPASS」という名前の他の教育サービスとは関係ありません。">
+  <table class="legal-table">
+    <tbody>{rows.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}</tbody>
+  </table>
+  <p class="small muted mt-1">※「COMPASS」「コンパス」という名称の他の教育サービス・出願システム等とは関係ありません。{tbd('名称・商標の調査結果')}</p>
+</LegalLayout>

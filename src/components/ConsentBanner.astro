@@ -1,0 +1,31 @@
+---
+/**
+ * Cookie・外部送信に関する通知バナー（通知型 + Consent Mode v2）
+ * 既定：アクセス解析のみ許可、広告関連は拒否。バナーで解析もオフにできる。
+ */
+---
+<div class="consent-banner" data-consent-banner hidden role="region" aria-label="Cookieに関するお知らせ">
+  <p>当サイトでは、サービス改善のためにアクセス解析（Google Analytics 等）を利用しています。詳しくは<a href="/privacy/#external">プライバシーポリシー</a>をご覧ください。</p>
+  <div class="consent-banner__actions">
+    <button type="button" class="btn btn--secondary" data-consent="denied">解析を利用しない</button>
+    <button type="button" class="btn btn--secondary" data-consent="granted">同意して閉じる</button>
+  </div>
+</div>
+<script>
+  const KEY = 'compass_consent';
+  const banner = document.querySelector<HTMLElement>('[data-consent-banner]');
+  const read = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
+  const write = (v: string) => { try { localStorage.setItem(KEY, v); } catch { /* ignore */ } };
+  if (banner) {
+    if (!read()) banner.hidden = false;
+    banner.querySelectorAll<HTMLButtonElement>('[data-consent]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const v = b.dataset.consent as 'granted' | 'denied';
+        write(v);
+        window.gtag?.('consent', 'update', { analytics_storage: v });
+        banner.hidden = true;
+      }),
+    );
+    document.querySelector('[data-consent-open]')?.addEventListener('click', () => { banner.hidden = false; });
+  }
+</script>

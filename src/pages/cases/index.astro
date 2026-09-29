@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import CaseCard from '../../components/CaseCard.astro';
+import NextSteps from '../../components/NextSteps.astro';
+import FinalCta from '../../components/FinalCta.astro';
+const cases = (await getCollection('cases', (e) => e.data.consent)).sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const crumbs = [{ label: '支援事例' }];
+---
+<BaseLayout
+  title="支援事例｜中学受験の相談事例｜COMPASS"
+  description="転塾、成績の伸び悩み、志望校の見直しなどのご相談事例を「課題・分析・提案・実行・結果」の流れでご紹介します。個人が特定されないよう内容を一部変更しています。"
+  pageType="case"
+  crumbs={crumbs}
+  noindex={cases.length === 0}
+>
+  <PageHeader title="支援事例" eyebrow="CASES" crumbs={crumbs}
+    summary="どのようなご家庭の、どのような悩みを、どのように整理したのかを「課題 → 分析 → 提案 → 実行 → 結果」の流れでご紹介します。" />
+  <section class="section">
+    <div class="container">
+      {cases.length > 0 ? (
+        <div class="grid grid--2">{cases.map((c) => <CaseCard entry={c} />)}</div>
+      ) : (
+        <div class="empty-state container--text">
+          <h2 class="section-title" style="font-size:var(--fs-md)">事例の掲載について</h2>
+          <p>支援事例は、ご相談いただいたご家庭から掲載の許可をいただいたものだけを、個人が特定されないよう内容を一部変更して掲載します。結果は事実のみを記載し、合否よりも「ご家庭にどんな変化があったか」を中心にお伝えします。</p>
+          <p style="margin:0">現在、掲載できる事例を準備しています。</p>
+        </div>
+      )}
+      <p class="small muted mt-2">※掲載している事例はご本人の許可を得たものです。同じ結果をお約束するものではありません。</p>
+    </div>
+  </section>
+  <NextSteps links={[{ href: '/voices/', label: 'お客様の声' }, { href: '/services/', label: 'ご相談いただけること' }]} />
+  <FinalCta />
+</BaseLayout>

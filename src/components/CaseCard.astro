@@ -1,0 +1,16 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { entry: CollectionEntry<'cases'> }
+const { data: d } = Astro.props.entry;
+---
+<article class="card">
+  <div class="voice-card__meta"><span class="tag">{d.grade}</span>{d.tags.map((t) => <span class="tag">{t}</span>)}</div>
+  <h3>{d.title}</h3>
+  <ol class="case-flow">
+    <li><b>課題</b><span>{d.challenge}</span></li>
+    <li><b>分析</b><span>{d.analysis}</span></li>
+    <li><b>提案</b><span>{d.proposal}</span></li>
+    <li><b>実行</b><span>{d.action}</span></li>
+    <li><b>結果</b><span>{d.result}</span></li>
+  </ol>
+</article>

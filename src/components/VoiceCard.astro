@@ -1,0 +1,20 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+interface Props { entry: CollectionEntry<'voices'> }
+const { entry } = Astro.props;
+const d = entry.data;
+
+const { Content } = await render(entry);
+---
+<article class="card voice-card">
+  <div class="voice-card__meta">
+    <span class="tag">{d.grade}</span>
+    {d.gender && <span class="tag">{d.gender}</span>}
+    {d.juku && <span class="tag">{d.juku}</span>}
+  </div>
+  <p class="small"><strong>ご相談前の悩み：</strong>{d.worry}</p>
+  <p class="small"><strong>ご相談内容：</strong>{d.consultation}</p>
+  <div><Content /></div>
+  <p class="small"><strong>ご相談後の変化：</strong>{d.change}</p>
+  <p class="small muted">※ご本人の許可を得て掲載しています。{d.rewarded && '掲載にあたり謝礼をお渡ししています。'}</p>
+</article>

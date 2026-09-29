@@ -1,0 +1,14 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCategory } from '../data/columnCategories';
+interface Props { entry: CollectionEntry<'columns'> }
+const { entry } = Astro.props;
+const cat = getCategory(entry.data.category);
+const fmt = (d: Date) => d.toISOString().slice(0, 10).replaceAll('-', '.');
+---
+<a href={`/column/${entry.id}/`} class="card column-card">
+  <div class="voice-card__meta"><span class="tag">{cat?.name}</span></div>
+  <h3>{entry.data.title}</h3>
+  <p>{entry.data.description}</p>
+  <time datetime={entry.data.publishedAt.toISOString()}>{fmt(entry.data.publishedAt)}</time>
+</a>

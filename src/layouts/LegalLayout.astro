@@ -1,0 +1,17 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { tbd } from '../config/site';
+interface Props { title: string; description: string; h1: string; summary?: string; review?: boolean }
+const { title, description, h1, summary, review = true } = Astro.props;
+const crumbs = [{ label: h1 }];
+---
+<BaseLayout title={title} description={description} pageType="legal" crumbs={crumbs} sticky={false}>
+  <PageHeader title={h1} eyebrow="POLICY" crumbs={crumbs} summary={summary} />
+  <section class="section">
+    <div class="container container--text prose">
+      {review && <p class="small">{tbd('公開前に弁護士による文面確認（本ページはドラフトです）')}</p>}
+      <slot />
+    </div>
+  </section>
+</BaseLayout>

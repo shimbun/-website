@@ -1,0 +1,21 @@
+---
+/** ファーストビュー背景の羅針盤（装飾） */
+---
+<svg class="hero__compass" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+  <g fill="none" stroke="currentColor">
+    <circle cx="200" cy="200" r="190" stroke-width="2" />
+    <circle cx="200" cy="200" r="160" stroke-width="1" />
+    <circle cx="200" cy="200" r="110" stroke-width="1" stroke-dasharray="2 6" />
+    {Array.from({ length: 72 }, (_, i) => {
+      const a = (i * 5 * Math.PI) / 180;
+      const r1 = i % 18 === 0 ? 140 : i % 2 === 0 ? 150 : 154;
+      return <line x1={200 + Math.sin(a) * r1} y1={200 - Math.cos(a) * r1} x2={200 + Math.sin(a) * 160} y2={200 - Math.cos(a) * 160} stroke-width={i % 18 === 0 ? 3 : 1} />;
+    })}
+  </g>
+  <g fill="currentColor">
+    <path d="M200 60 216 200h-32Z" />
+    <path d="M200 340 184 200h32Z" opacity=".5" />
+    <path d="M60 200 200 188v24Z" opacity=".35" />
+    <path d="M340 200 200 212v-24Z" opacity=".35" />
+  </g>
+</svg>

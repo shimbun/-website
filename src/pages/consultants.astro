@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ConsultantCard from '../components/ConsultantCard.astro';
+import NextSteps from '../components/NextSteps.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { consultants } from '../data/consultants';
+const crumbs = [{ label: 'コンサルタント紹介' }];
+---
+<BaseLayout
+  title="コンサルタント紹介｜COMPASS 中学受験コンサルタント"
+  description="COMPASSのコンサルタントの経歴、得意な相談テーマ、相談で大切にしていることをご紹介します。どんな人が相談に乗るのか、ご相談前にご確認ください。"
+  pageType="consultant"
+  crumbs={crumbs}
+>
+  <PageHeader title="コンサルタント紹介" eyebrow="CONSULTANT" crumbs={crumbs}
+    summary="ご相談を担当するコンサルタントの経歴と、相談で大切にしていることをご紹介します。掲載している経歴・資格は、確認できた事実のみです。" />
+  <section class="section">
+    <div class="container stack">
+      {consultants.map((c) => <ConsultantCard c={c} detail />)}
+    </div>
+  </section>
+  <NextSteps links={[{ href: '/about/', label: 'COMPASSの考え方' }, { href: '/cases/', label: '支援事例' }]} />
+  <FinalCta />
+</BaseLayout>

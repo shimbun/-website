@@ -1,0 +1,14 @@
+---
+import Icon from './Icon.astro';
+import type { Service } from '../data/services';
+interface Props { service: Service; headingLevel?: 'h3' | 'h2' }
+const { service: s, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+---
+<a href={`/services/${s.slug}/`} class="card service-card">
+  <span class="service-card__icon"><Icon name={s.icon} /></span>
+  <p class="service-card__worry">{s.worry}</p>
+  <H>{s.name}</H>
+  <p>{s.catch}</p>
+  <span class="text-link">詳しく見る<Icon name="arrow" /></span>
+</a>

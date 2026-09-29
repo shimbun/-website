@@ -1,0 +1,141 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StickyCta from '../components/StickyCta.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { site, IS_PRODUCTION } from '../config/site';
+
+interface Crumb { label: string; href?: string }
+interface Props {
+  title: string;
+  description: string;
+  /** GA4 page_type / content_group */
+  pageType: string;
+  /** パンくず（BreadcrumbList 構造化データに使用） */
+  crumbs?: Crumb[];
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>[];
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  /** フォーム・法務ページでは固定CTAを出さない */
+  sticky?: false | 'price' | 'flow' | 'line';
+  /** フォームページ：ヘッダーを簡略化 */
+  minimalHeader?: boolean;
+}
+
+const {
+  title,
+  description,
+  pageType,
+  crumbs,
+  noindex = false,
+  jsonLd = [],
+  ogImage = '/og/default.png',
+  ogType = 'website',
+  sticky = 'price',
+  minimalHeader = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = new URL(ogImage, Astro.site).href;
+const robots = !IS_PRODUCTION || noindex ? 'noindex, nofollow' : 'index, follow';
+const gtmId = import.meta.env.PUBLIC_GTM_ID;
+
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: site.name,
+  url: new URL('/', Astro.site).href,
+  logo: new URL('/icon-512.png', Astro.site).href,
+  description: site.description,
+  serviceType: '中学受験に関する相談・コンサルティング',
+};
+const breadcrumbLd = crumbs && {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [{ label: 'トップ', href: '/' }, ...crumbs].map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.label,
+    item: new URL(c.href ?? Astro.url.pathname, Astro.site).href,
+  })),
+};
+const ld = [...(pageType === 'top' ? [orgLd] : []), ...(breadcrumbLd ? [breadcrumbLd] : []), ...jsonLd];
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#1E2F4D" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <JsonLd data={ld} />
+
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = gtag;
+      var c = null;
+      try { c = localStorage.getItem('compass_consent'); } catch (e) {}
+      gtag('consent', 'default', {
+        analytics_storage: c === 'denied' ? 'denied' : 'granted',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500,
+      });
+    </script>
+    {gtmId && (
+      <script is:inline define:vars={{ gtmId }}>
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+          var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+          j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', gtmId);
+      </script>
+    )}
+    <slot name="head" />
+  </head>
+  <body data-page-type={pageType}>
+    <a class="skip-link" href="#main">本文へスキップ</a>
+    <Header minimal={minimalHeader} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    {sticky && <StickyCta left={sticky} />}
+    <ConsentBanner />
+    <script>
+      import '../scripts/analytics';
+    </script>
+    {!IS_PRODUCTION && (
+      <script>
+        import '../scripts/tbd-highlight';
+      </script>
+    )}
+  </body>
+</html>

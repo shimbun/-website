@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PlanCard from '../components/PlanCard.astro';
+import NextSteps from '../components/NextSteps.astro';
+import FinalCta from '../components/FinalCta.astro';
+import FaqList from '../components/FaqList.astro';
+import { plans, pricingNotes } from '../data/pricing';
+import { faqGroups } from '../data/faq';
+const crumbs = [{ label: '料金' }];
+const priceFaqs = faqGroups.find((g) => g.id === 'price')!.items;
+---
+<BaseLayout
+  title="料金・プラン｜中学受験の相談費用｜COMPASS"
+  description="COMPASSの相談料金を掲載しています。単発相談と継続コンサルティングの費用、含まれる内容、お支払い方法・キャンセル規定をご確認いただけます。"
+  pageType="pricing"
+  crumbs={crumbs}
+  sticky="flow"
+>
+  <PageHeader title="料金・プラン" eyebrow="PRICE" crumbs={crumbs}
+    summary="料金はすべて公開しています。表示価格はすべて税込です。まずは単発相談から、ご家庭のペースでご利用いただけます。" />
+  <section class="section" data-section="pricing">
+    <div class="container">
+      <h2 class="visually-hidden">料金プラン</h2>
+      <div class="grid grid--2">{plans.map((p) => <PlanCard plan={p} />)}</div>
+      <ul class="notes">{pricingNotes.map((n) => <li>{n}</li>)}</ul>
+      <p class="small muted mt-1">詳しい条件は<a href="/tokushoho/">特定商取引法に基づく表記</a>・<a href="/terms/">利用規約</a>をご確認ください。</p>
+    </div>
+  </section>
+  <section class="section section--mist">
+    <div class="container container--text">
+      <h2 class="section-title">料金についてのよくあるご質問</h2>
+      <FaqList items={priceFaqs} />
+    </div>
+  </section>
+  <NextSteps links={[{ href: '/flow/', label: 'ご相談の流れ' }, { href: '/faq/', label: 'よくあるご質問' }]} />
+  <FinalCta />
+</BaseLayout>

@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import VoiceCard from '../components/VoiceCard.astro';
+import NextSteps from '../components/NextSteps.astro';
+import FinalCta from '../components/FinalCta.astro';
+const voices = (await getCollection('voices', (e) => e.data.consent)).sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const crumbs = [{ label: 'お客様の声' }];
+---
+<BaseLayout
+  title="お客様の声｜中学受験の相談を利用したご家庭の感想｜COMPASS"
+  description="COMPASSにご相談いただいた保護者の方からの感想をご紹介します。相談を検討されている方の参考になれば幸いです。"
+  pageType="voice"
+  crumbs={crumbs}
+  noindex={voices.length === 0}
+>
+  <PageHeader title="ご相談いただいた保護者の声" eyebrow="VOICES" crumbs={crumbs}
+    summary="実際にご相談いただいた保護者の方から寄せられた感想です。学年・通塾状況・ご相談前の悩みと、ご相談後の変化をあわせてご紹介します。" />
+  <section class="section">
+    <div class="container">
+      {voices.length > 0 ? (
+        <div class="grid grid--2">{voices.map((v) => <VoiceCard entry={v} />)}</div>
+      ) : (
+        <div class="empty-state container--text">
+          <h2 class="section-title" style="font-size:var(--fs-md)">お客様の声の掲載について</h2>
+          <p style="margin:0">お客様の声は、ご本人に内容と公開範囲をご確認いただき、掲載の許可をいただいたものだけを掲載します。現在、掲載の準備をしています。</p>
+        </div>
+      )}
+    </div>
+  </section>
+  <NextSteps links={[{ href: '/cases/', label: '支援事例' }, { href: '/price/', label: '料金' }]} />
+  <FinalCta />
+</BaseLayout>

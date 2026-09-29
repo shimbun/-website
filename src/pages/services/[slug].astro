@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PlanCard from '../../components/PlanCard.astro';
+import CtaButton from '../../components/CtaButton.astro';
+import NextSteps from '../../components/NextSteps.astro';
+import FinalCta from '../../components/FinalCta.astro';
+import FaqList from '../../components/FaqList.astro';
+import Icon from '../../components/Icon.astro';
+import { services, type Service } from '../../data/services';
+import { getPlan } from '../../data/pricing';
+import { topFaqs } from '../../data/faq';
+import { cta } from '../../config/site';
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+const { service: s } = Astro.props as { service: Service };
+const plan = getPlan(s.planId);
+const crumbs = [{ label: 'サービス', href: '/services/' }, { label: s.name }];
+const columns = (await getCollection('columns', (c) => !c.data.draft && (c.data.service === s.slug || c.data.category === s.columnCategory)))
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 3);
+const others = services.filter((x) => x.slug !== s.slug).slice(0, 2);
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: s.name,
+  description: s.seo.description,
+  serviceType: '中学受験コンサルティング',
+  provider: { '@type': 'ProfessionalService', name: 'COMPASS 中学受験コンサルタント' },
+};
+---
+<BaseLayout title={s.seo.title} description={s.seo.description} pageType="service" crumbs={crumbs} jsonLd={[serviceLd]}>
+  <PageHeader title={s.seo.h1} eyebrow={s.worry} crumbs={crumbs} summary={s.catch} />
+
+  <section class="section">
+    <div class="container container--text">
+      <p>{s.lead}</p>
+      <h2 class="section-title mt-2">こんな方に</h2>
+      <ul class="checklist">{s.forWhom.map((w) => <li><Icon name="checkCircle" /><span>{w}</span></li>)}</ul>
+
+      <h2 class="section-title mt-2">ご相談いただけること</h2>
+      <ul>{s.topics.map((t) => <li>{t}</li>)}</ul>
+
+      <h2 class="section-title mt-2">ご相談のあとに</h2>
+      <div class="card"><p style="margin:0">{s.outcome}を目指します。最終的な判断はご家庭で行っていただけます。</p></div>
+      {s.note && <p class="small muted mt-1">{s.note}</p>}
+
+      <div class="center mt-2">
+        <CtaButton location="service_detail" size="lg" label={cta.topic(s.name.replace('中学受験 ', ''))} topic={s.slug} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white" data-section="pricing" aria-labelledby="svc-price">
+    <div class="container container--text">
+      <h2 id="svc-price" class="section-title">料金</h2>
+      <PlanCard plan={plan} showCta={false} />
+      <p class="mt-1"><a href="/price/">すべての料金・お支払い方法を見る</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--text">
+      <h2 class="section-title">ご相談の進め方</h2>
+      <p>お申し込み → ヒアリング → 分析 → 戦略のご提案、の順で進みます。<a href="/flow/">ご相談の流れを詳しく見る</a></p>
+      <h2 class="section-title mt-2">よくあるご質問</h2>
+      <FaqList items={topFaqs.slice(0, 4)} />
+      {columns.length > 0 && (
+        <>
+          <h2 class="section-title mt-2">関連するコラム</h2>
+          <ul>{columns.map((c) => <li><a href={`/column/${c.id}/`}>{c.data.title}</a></li>)}</ul>
+        </>
+      )}
+    </div>
+  </section>
+
+  <NextSteps links={others.map((o) => ({ href: `/services/${o.slug}/`, label: o.name }))} />
+  <FinalCta topic={s.slug} />
+</BaseLayout>

@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../config/site';
+const crumbs = [{ label: 'お申し込み完了' }];
+---
+<BaseLayout
+  title="お申し込みありがとうございました｜COMPASS"
+  description="ご相談のお申し込みを受け付けました。"
+  pageType="booking"
+  crumbs={crumbs}
+  noindex
+  sticky={false}
+>
+  <PageHeader title="お申し込みありがとうございました" eyebrow="THANK YOU" crumbs={crumbs} />
+  <section class="section">
+    <div class="container container--text">
+      <ol class="form-steps" aria-label="お申し込みの手順">
+        <li class="is-done">入力</li>
+        <li class="is-done">確認</li>
+        <li aria-current="step">完了</li>
+      </ol>
+      <p>ご相談のお申し込みを受け付けました。確認のメールを自動でお送りしています。届かない場合は、迷惑メールフォルダもご確認ください。</p>
+
+      <h2 class="section-title mt-2">このあとの流れ</h2>
+      <ol class="steps">
+        <li><h3>メールでご連絡します</h3><p>内容を確認のうえ、{site.consultation.replyWithin}に、ご入力いただいたメールアドレスへご連絡します。</p></li>
+        <li><h3>日程を決めます</h3><p>ご都合の良い日時をお選びいただき、ご相談の日程を確定します。</p></li>
+        <li><h3>ご相談</h3><p>{site.consultation.format}でお話を伺います。</p></li>
+      </ol>
+
+      {site.bookingUrl && (
+        <div class="card mt-2 center">
+          <p><strong>今すぐ日程を選ぶこともできます</strong></p>
+          <a href={site.bookingUrl} class="btn btn--primary" data-cta="thanks_booking" rel="noopener" target="_blank">日程を選ぶ<Icon name="arrow" /></a>
+        </div>
+      )}
+
+      <div class="card mt-2">
+        <h2 class="section-title" style="font-size:var(--fs-md)">ご相談までの間に</h2>
+        <ul style="margin:0">
+          <li>模試の結果や塾の成績表があれば、お手元にご用意ください（任意です）。</li>
+          <li>気になっていることを、メモしておいていただくとスムーズです。</li>
+        </ul>
+      </div>
+      <p class="mt-2"><a href="/faq/">よくあるご質問を見る</a>／<a href="/column/">中学受験コラムを読む</a>／<a href="/">トップページへ戻る</a></p>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import { track } from '../../scripts/analytics';
+  try {
+    const raw = sessionStorage.getItem('compass_lead');
+    if (raw) {
+      track('generate_lead', JSON.parse(raw));
+      sessionStorage.removeItem('compass_lead');
+    }
+  } catch { /* ignore */ }
+</script>

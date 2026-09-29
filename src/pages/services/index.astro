@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import NextSteps from '../../components/NextSteps.astro';
+import FinalCta from '../../components/FinalCta.astro';
+import { services } from '../../data/services';
+const crumbs = [{ label: 'サービス' }];
+---
+<BaseLayout
+  title="サービス一覧｜中学受験の相談内容｜COMPASS"
+  description="戦略相談、成績・学習相談、志望校・併願校相談、塾選び・転塾相談、家庭学習相談、継続コンサルティングの6つ。お悩みに合わせて、単発のご相談から継続的なご相談までお選びいただけます。"
+  pageType="service"
+  crumbs={crumbs}
+>
+  <PageHeader title="ご家庭の悩みに合わせた、6つの相談サービス" eyebrow="SERVICES" crumbs={crumbs}
+    summary="お悩みに近いものを選んでください。どれに当てはまるか分からない場合も、そのままご相談いただけます。" />
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--3">{services.map((s) => <ServiceCard service={s} headingLevel="h2" />)}</div>
+      <p class="center mt-2 muted">複数のテーマにまたがるご相談も、1回のご相談の中でお話しいただけます。</p>
+    </div>
+  </section>
+  <NextSteps links={[{ href: '/price/', label: '料金を見る' }, { href: '/flow/', label: 'ご相談の流れを見る' }]} />
+  <FinalCta />
+</BaseLayout>

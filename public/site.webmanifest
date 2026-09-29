@@ -1,0 +1,11 @@
+{
+  "name": "COMPASS 中学受験コンサルタント",
+  "short_name": "COMPASS",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#1E2F4D",
+  "background_color": "#FAF7F1",
+  "display": "browser"
+}

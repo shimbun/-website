@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import NextSteps from '../components/NextSteps.astro';
+import FinalCta from '../components/FinalCta.astro';
+import Icon from '../components/Icon.astro';
+import { site, tbd } from '../config/site';
+
+const crumbs = [{ label: 'COMPASSとは' }];
+const does = ['成績・模試・学習記録などの状況の整理', '課題の優先順位づけ', 'ご家庭に合う選択肢と、それぞれの注意点の提示', '定期的な見直し（ご希望の方のみ）'];
+const doesNot = ['合格の保証', '特定の塾や教材の押し売り', '塾や先生の批判', `授業・学習指導そのもの ${tbd('学習指導サービスの有無')}`];
+---
+<BaseLayout
+  title="COMPASSとは｜中学受験のセカンドオピニオン｜COMPASS"
+  description="COMPASSは特定の塾に属さない中学受験の相談サービスです。第三者だからこそできる客観的な整理と提案で、ご家庭の判断を支えます。考え方と大切にしていることをご紹介します。"
+  pageType="about"
+  crumbs={crumbs}
+>
+  <PageHeader title="中学受験に、セカンドオピニオンという考え方を。" eyebrow="ABOUT" crumbs={crumbs}
+    summary="このページでは、COMPASSがどんな立場で、何を大切にしてご相談をお受けしているかをご紹介します。" />
+
+  <section class="section">
+    <div class="container container--text prose">
+      <h2>「わが家の場合は？」を相談できる場所</h2>
+      <p>中学受験の情報は、本やインターネット、SNSにたくさんあります。それでも、「わが家の場合はどうすればいいのか」を落ち着いて相談できる場所は、意外と多くありません。</p>
+      <p>塾には塾の、ご家族にはご家族の立場があります。どちらも大切な相談相手ですが、ときには少し離れた場所から全体を見てくれる人がいると、判断がしやすくなることがあります。</p>
+
+      <h2>セカンドオピニオンとは</h2>
+      <p>医療の世界では、主治医とは別の医師に意見を聞くことを「セカンドオピニオン」と呼びます。主治医を否定するためではなく、ご本人が納得して治療を選ぶための仕組みです。</p>
+      <p>COMPASSは、中学受験にも同じ考え方を取り入れています。今の塾・学習方法を続けるかどうかも含めて、別の視点から確認できる場所です。</p>
+
+      <h2>COMPASSの立場</h2>
+      <p>COMPASSは、今の塾をやめさせることを目的にしていません。お話を伺った結果、「今の塾を続けるのが一番良い」という結論になることも、もちろんあります。</p>
+      <p>{site.neutralityNote}</p>
+    </div>
+  </section>
+
+  <section class="section section--white" aria-labelledby="dodont-title">
+    <div class="container container--text">
+      <h2 id="dodont-title" class="section-title">COMPASSがすること・しないこと</h2>
+      <div class="dodont">
+        <div class="card">
+          <h3><Icon name="checkCircle" class="dd-icon" />すること</h3>
+          <ul>{does.map((d) => <li>{d}</li>)}</ul>
+        </div>
+        <div class="card">
+          <h3><Icon name="close" class="dd-icon" />しないこと</h3>
+          <ul>{doesNot.map((d) => <li>{d}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--text prose">
+      <h2>合格をお約束しない理由</h2>
+      <p>中学受験の結果は、お子さまの体調や当日の問題、その年の受験者の動向など、多くの要素で決まります。そのため、COMPASSが合格をお約束することはできません。</p>
+      <p>その代わりに私たちができるのは、ご家庭が迷ったときに判断できる材料と視点をそろえ、納得して次の一歩を選べるようにすることです。</p>
+
+      <h2>COMPASSという名前について</h2>
+      <p>羅針盤（コンパス）は、進む方角を確かめるための道具です。目的地を決めるのはご家庭とお子さま。COMPASSは、その道のりで方角を確かめる道具でありたいと考えています。{tbd('名称の由来の公式な説明')}</p>
+
+      <h2>代表メッセージ</h2>
+      <p>{tbd('代表メッセージ・代表者名')}</p>
+      <p><a href="/consultants/">コンサルタント紹介を見る</a></p>
+    </div>
+  </section>
+
+  <NextSteps links={[{ href: '/services/', label: 'ご相談いただけること' }, { href: '/price/', label: '料金' }]} />
+  <FinalCta />
+</BaseLayout>
+<style>
+  .dd-icon { width: 1.25em; height: 1.25em; color: var(--brass-deep); }
+</style>

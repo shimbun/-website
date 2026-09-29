@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaButton from '../components/CtaButton.astro';
+---
+<BaseLayout title="ページが見つかりません｜COMPASS" description="お探しのページは見つかりませんでした。" pageType="404" noindex sticky={false}>
+  <section class="section">
+    <div class="container container--text center">
+      <p class="eyebrow">404 NOT FOUND</p>
+      <h1 class="section-title">お探しのページが見つかりませんでした</h1>
+      <p>ページが移動または削除された可能性があります。お手数ですが、以下のページからお探しください。</p>
+      <ul class="toc" style="justify-content:center">
+        <li><a href="/">トップページ</a></li>
+        <li><a href="/services/">ご相談いただけること</a></li>
+        <li><a href="/price/">料金</a></li>
+        <li><a href="/faq/">よくある質問</a></li>
+        <li><a href="/column/">コラム</a></li>
+      </ul>
+      <div class="mt-2"><CtaButton location="404" /></div>
+    </div>
+  </section>
+</BaseLayout>

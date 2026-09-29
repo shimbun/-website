@@ -1,0 +1,32 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site, tbd } from '../config/site';
+import { plans, pricingNotes } from '../data/pricing';
+const o = site.operator;
+const rows: [string, string][] = [
+  ['販売事業者', o.name],
+  ['代表者', o.representative],
+  ['所在地', o.address],
+  ['電話番号', `${o.tel}（受付時間：${o.hours}）`],
+  ['メールアドレス', o.email],
+  ['役務の名称・内容', '中学受験に関する相談・コンサルティング（詳細は「サービス」ページをご覧ください）'],
+  ['役務の対価', plans.map((p) => `${p.name}：${p.price}／${p.unit}（税込）`).join('\n')],
+  ['対価以外に必要な費用', `オンライン相談にかかる通信費はお客様のご負担となります。${tbd('振込手数料等その他の費用')}`],
+  ['代金の支払方法', tbd('支払方法')],
+  ['代金の支払時期', tbd('支払時期')],
+  ['役務の提供時期', tbd('役務の提供時期（例：お支払い確認後、ご予約の日時に提供）')],
+  ['キャンセル・日程変更', tbd('キャンセル期限・キャンセル料・日程変更の規定')],
+  ['契約の解除・返金', `${tbd('中途解約・返金の方法')}\n※通信販売には、法律に基づくクーリング・オフ制度の適用はありません。${tbd('特定継続的役務提供への該当性の確認（該当する場合は法定のクーリング・オフ・中途解約の定めに従う）')}`],
+  ['継続契約の条件', tbd('契約期間・自動更新の有無・解約方法')],
+  ['動作環境', tbd('オンライン相談で使用するツール・推奨環境')],
+  ['特別な販売条件', `対象：${site.target}。${tbd('提供地域・その他の条件')}`],
+];
+---
+<LegalLayout title="特定商取引法に基づく表記｜COMPASS" description="COMPASS 中学受験コンサルタントの特定商取引法に基づく表記です。" h1="特定商取引法に基づく表記">
+  <table class="legal-table">
+    <tbody>
+      {rows.map(([k, v]) => <tr><th scope="row">{k}</th><td style="white-space:pre-line">{v}</td></tr>)}
+    </tbody>
+  </table>
+  <ul class="notes">{pricingNotes.slice(0, 1).map((n) => <li>{n}</li>)}</ul>
+</LegalLayout>

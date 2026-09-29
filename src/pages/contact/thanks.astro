@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { site } from '../../config/site';
+const crumbs = [{ label: 'お問い合わせ', href: '/contact/' }, { label: '送信完了' }];
+---
+<BaseLayout title="お問い合わせを受け付けました｜COMPASS" description="お問い合わせを受け付けました。" pageType="contact" crumbs={crumbs} noindex sticky={false}>
+  <PageHeader title="お問い合わせを受け付けました" eyebrow="THANK YOU" crumbs={crumbs} />
+  <section class="section">
+    <div class="container container--text">
+      <p>お問い合わせいただき、ありがとうございます。内容を確認のうえ、{site.consultation.replyWithin}にご連絡します。</p>
+      <p><a href="/">トップページへ戻る</a></p>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import { track } from '../../scripts/analytics';
+  // フォーム送信直後の表示時のみ計測（再読み込みで二重計測しない）
+  if (document.referrer.includes('/contact/') && !document.referrer.includes('/thanks/')) track('generate_lead', { lead_type: 'contact' });
+</script>

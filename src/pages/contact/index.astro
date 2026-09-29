@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
+const crumbs = [{ label: 'お問い合わせ' }];
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+---
+<BaseLayout
+  title="お問い合わせ｜COMPASS 中学受験コンサルタント"
+  description="取材・講演のご依頼、法人の方からのお問い合わせなど、ご相談のお申し込み以外のお問い合わせはこちらから。"
+  pageType="contact"
+  crumbs={crumbs}
+  sticky={false}
+>
+  <PageHeader title="お問い合わせ" eyebrow="CONTACT" crumbs={crumbs}
+    summary="取材・講演のご依頼など、ご相談のお申し込み以外のお問い合わせはこちらのフォームをご利用ください。" />
+  <section class="section">
+    <div class="container container--text">
+      <div class="card" style="margin-bottom:1.5rem">
+        <p style="margin:0">中学受験のご相談をご希望の方は、<a href="/consultation/" data-cta="contact_redirect">ご相談のお申し込みフォーム</a>からお送りください。</p>
+      </div>
+      <div class="form-panel">
+        <form class="form" method="post" action="/api/contact" data-contact-form>
+          <input type="hidden" name="form_type" value="contact" />
+          <input type="hidden" name="started_at" value="" />
+          <div class="hp-field" aria-hidden="true"><label>この欄は入力しないでください<input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+          <div class="field">
+            <label for="c-name">お名前 <span class="badge badge--req">必須</span></label>
+            <input id="c-name" class="input" name="name" autocomplete="name" required maxlength="50" />
+          </div>
+          <div class="field">
+            <label for="c-org">会社名・団体名 <span class="badge badge--opt">任意</span></label>
+            <input id="c-org" class="input" name="organization" autocomplete="organization" maxlength="100" />
+          </div>
+          <div class="field">
+            <label for="c-email">メールアドレス <span class="badge badge--req">必須</span></label>
+            <input id="c-email" class="input" type="email" name="email" autocomplete="email" inputmode="email" required maxlength="254" />
+          </div>
+          <div class="field">
+            <label for="c-message">お問い合わせ内容 <span class="badge badge--req">必須</span></label>
+            <textarea id="c-message" class="textarea" name="message" required maxlength="2000"></textarea>
+          </div>
+          <div class="field">
+            <label class="consent"><input type="checkbox" name="consent" value="yes" required /><span><a href="/privacy/" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します <span class="badge badge--req">必須</span></span></label>
+          </div>
+          {turnstileKey && <div class="cf-turnstile" data-sitekey={turnstileKey} data-size="flexible"></div>}
+          <div class="form-actions"><button class="btn btn--primary btn--lg" type="submit">送信する<Icon name="arrow" /></button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+{turnstileKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+<script>
+  const f = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (f) (f.elements.namedItem('started_at') as HTMLInputElement).value = String(Date.now());
+</script>

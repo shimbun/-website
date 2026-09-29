@@ -1,0 +1,128 @@
+---
+import CompassMark from './CompassMark.astro';
+import Icon from './Icon.astro';
+import { cta, CONSULTATION_PATH } from '../config/site';
+import { services } from '../data/services';
+
+interface Props { minimal?: boolean }
+const { minimal = false } = Astro.props;
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/about/', label: 'COMPASSとは' },
+  { href: '/services/', label: 'サービス' },
+  { href: '/price/', label: '料金' },
+  { href: '/cases/', label: '支援事例' },
+  { href: '/consultants/', label: 'コンサルタント' },
+  { href: '/column/', label: 'コラム' },
+  { href: '/faq/', label: 'よくある質問' },
+];
+const isCurrent = (href: string) => (path === href || path.startsWith(href) ? 'page' : undefined);
+---
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="/" class="logo">
+      <CompassMark class="logo__mark" />
+      <span class="logo__text">
+        <span class="logo__en">COMPASS</span>
+        <span class="logo__ja">中学受験コンサルタント</span>
+      </span>
+    </a>
+    {!minimal && (
+      <nav class="gnav" aria-label="グローバルナビゲーション">
+        <ul>
+          {nav.map((n) => <li><a href={n.href} aria-current={isCurrent(n.href)}>{n.label}</a></li>)}
+        </ul>
+      </nav>
+    )}
+    <div class="header-actions">
+      {!minimal && (
+        <a href={CONSULTATION_PATH} class="btn btn--primary header-cta" data-cta="header"><span class="header-cta__long">{cta.short}</span><span class="header-cta__short">相談する</span></a>
+      )}
+      {!minimal && (
+        <button type="button" class="menu-btn" aria-expanded="false" aria-controls="drawer" data-menu-open>
+          <Icon name="menu" />
+          <span>MENU</span>
+        </button>
+      )}
+    </div>
+  </div>
+</header>
+
+{!minimal && (
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="メニュー" data-open="false" hidden>
+    <div class="drawer__head">
+      <a href="/" class="logo">
+        <CompassMark class="logo__mark" />
+        <span class="logo__text"><span class="logo__en">COMPASS</span><span class="logo__ja">中学受験コンサルタント</span></span>
+      </a>
+      <button type="button" class="menu-btn drawer__close" data-menu-close>
+        <Icon name="close" />
+        <span>閉じる</span>
+      </button>
+    </div>
+    <nav aria-label="メニュー">
+      <ul>
+        <li><a href="/about/">COMPASSとは<Icon name="arrow" class="icon-sm" /></a></li>
+        <li>
+          <p class="drawer__label">ご相談いただけること</p>
+          <ul class="drawer__sub">
+            {services.map((s) => <li><a href={`/services/${s.slug}/`}>{s.worry}</a></li>)}
+          </ul>
+        </li>
+        <li><a href="/price/">料金</a></li>
+        <li><a href="/flow/">ご相談の流れ</a></li>
+        <li><a href="/cases/">支援事例</a></li>
+        <li><a href="/voices/">お客様の声</a></li>
+        <li><a href="/consultants/">コンサルタント</a></li>
+        <li><a href="/column/">コラム</a></li>
+        <li><a href="/faq/">よくある質問</a></li>
+      </ul>
+    </nav>
+    <div class="drawer__cta">
+      <a href={CONSULTATION_PATH} class="btn btn--primary btn--block btn--lg" data-cta="drawer">{cta.primary}</a>
+    </div>
+  </div>
+)}
+
+<style>
+  .icon-sm { width: 1em; height: 1em; }
+</style>
+
+<script>
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const drawer = document.getElementById('drawer');
+  const closeBtn = drawer?.querySelector<HTMLButtonElement>('[data-menu-close]');
+  if (openBtn && drawer && closeBtn) {
+    const focusables = () =>
+      Array.from(drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'));
+    const open = () => {
+      drawer.hidden = false;
+      drawer.dataset.open = 'true';
+      openBtn.setAttribute('aria-expanded', 'true');
+      document.body.dataset.menuOpen = 'true';
+      closeBtn.focus();
+    };
+    const close = () => {
+      drawer.dataset.open = 'false';
+      drawer.hidden = true;
+      openBtn.setAttribute('aria-expanded', 'false');
+      delete document.body.dataset.menuOpen;
+      openBtn.focus();
+    };
+    openBtn.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    drawer.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+      if (e.key === 'Tab') {
+        const f = focusables();
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+    drawer.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+      drawer.dataset.open = 'false'; drawer.hidden = true; delete document.body.dataset.menuOpen;
+    }));
+  }
+</script>

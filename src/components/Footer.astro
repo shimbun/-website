@@ -1,0 +1,66 @@
+---
+import CompassMark from './CompassMark.astro';
+import { site } from '../config/site';
+import { services } from '../data/services';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="/" class="logo">
+          <CompassMark class="logo__mark" />
+          <span class="logo__text"><span class="logo__en">COMPASS</span><span class="logo__ja">中学受験コンサルタント</span></span>
+        </a>
+        <p class="mt-1">{site.tagline}。<br />塾でも家族でもない第三者の立場から、中学受験の進め方を一緒に整理します。</p>
+        <p>運営：{site.operator.name}</p>
+        {site.lineUrl && (
+          <p><a href={site.lineUrl} data-line="footer" rel="noopener" target="_blank">LINE公式アカウント</a></p>
+        )}
+        {site.sns.length > 0 && (
+          <ul>
+            {site.sns.map((s) => <li><a href={s.url} rel="noopener" target="_blank">{s.label}</a></li>)}
+          </ul>
+        )}
+      </div>
+      <div>
+        <h2>SERVICES</h2>
+        <ul>
+          {services.map((s) => <li><a href={`/services/${s.slug}/`}>{s.name}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h2>ABOUT</h2>
+        <ul>
+          <li><a href="/about/">COMPASSとは</a></li>
+          <li><a href="/price/">料金</a></li>
+          <li><a href="/flow/">ご相談の流れ</a></li>
+          <li><a href="/consultants/">コンサルタント紹介</a></li>
+          <li><a href="/cases/">支援事例</a></li>
+          <li><a href="/voices/">お客様の声</a></li>
+          <li><a href="/column/">中学受験コラム</a></li>
+          <li><a href="/faq/">よくある質問</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>INFORMATION</h2>
+        <ul>
+          <li><a href="/consultation/" data-cta="footer">ご相談のお申し込み</a></li>
+          <li><a href="/contact/">その他のお問い合わせ</a></li>
+          <li><a href="/company/">運営者情報</a></li>
+          <li><a href="/editorial-policy/">コンテンツ制作方針</a></li>
+          <li><a href="/privacy/">プライバシーポリシー</a></li>
+          <li><a href="/terms/">利用規約</a></li>
+          <li><a href="/tokushoho/">特定商取引法に基づく表記</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <small>&copy; {year} {site.name}</small>
+      <button type="button" class="consent-link" data-consent-open>Cookieの設定</button>
+    </div>
+  </div>
+</footer>
+<style>
+  .consent-link { background: none; border: 0; color: #e8ecf2; font: inherit; text-decoration: underline; cursor: pointer; padding: 0; }
+</style>

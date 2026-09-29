@@ -1,0 +1,18 @@
+---
+import CtaButton from './CtaButton.astro';
+import type { Plan } from '../data/pricing';
+interface Props { plan: Plan; showCta?: boolean }
+const { plan, showCta = true } = Astro.props;
+---
+<article class:list={['card plan', { 'plan--featured': plan.featured }]}>
+  <h3 class="plan__name">{plan.name}</h3>
+  <p class="plan__summary">{plan.summary}</p>
+  <p class="plan__price">{plan.price} <span class="plan__unit">／{plan.unit}（税込）</span></p>
+  <dl>
+    <dt>時間・頻度</dt><dd>{plan.duration}</dd>
+    <dt>こんな方に</dt><dd>{plan.forWhom}</dd>
+  </dl>
+  <p class="small"><strong>含まれるもの</strong></p>
+  <ul>{plan.includes.map((i) => <li>{i}</li>)}</ul>
+  {showCta && <CtaButton location="pricing" block variant={plan.featured ? 'primary' : 'secondary'} />}
+</article>

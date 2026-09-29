@@ -1,0 +1,13 @@
+---
+/** COMPASS ロゴマーク（羅針盤）。正式ロゴ支給後に差し替え */
+interface Props { class?: string; decorative?: boolean }
+const { class: cls } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="2.5" />
+  <circle cx="32" cy="32" r="23" fill="none" stroke="currentColor" stroke-width="1" opacity=".5" />
+  <path d="M32 6v5M32 53v5M6 32h5M53 32h5" stroke="currentColor" stroke-width="2" />
+  <path d="M32 12 38 32H26Z" fill="#A8431F" />
+  <path d="M32 52 26 32h12Z" fill="currentColor" />
+  <circle cx="32" cy="32" r="3" fill="#C9A866" />
+</svg>

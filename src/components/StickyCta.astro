@@ -1,0 +1,58 @@
+---
+import { cta, CONSULTATION_PATH, site } from '../config/site';
+
+/**
+ * スマホ下部固定CTA（仕様書 4-4）
+ * 左：料金を見る（料金ページでは「相談の流れ」、LINE開設時は left="line" で差し替え可）
+ * 右：主CTA
+ */
+interface Props { left?: 'price' | 'flow' | 'line' }
+const { left = 'price' } = Astro.props;
+const leftLink =
+  left === 'line' && site.lineUrl
+    ? { href: site.lineUrl, label: 'LINE', attr: { 'data-line': 'sticky_footer', target: '_blank', rel: 'noopener' } }
+    : left === 'flow'
+      ? { href: '/flow/', label: '相談の流れ', attr: {} }
+      : { href: '/price/', label: '料金を見る', attr: {} };
+---
+<div class="sticky-cta" data-sticky-cta data-visible="false" aria-hidden="true">
+  <a href={leftLink.href} class="btn btn--secondary" tabindex="-1" {...leftLink.attr}>{leftLink.label}</a>
+  <a href={CONSULTATION_PATH} class="btn btn--primary" tabindex="-1" data-cta="sticky_footer">{cta.short}</a>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-sticky-cta]');
+  if (bar) {
+    const links = bar.querySelectorAll('a');
+    let pastHero = false;
+    let finalVisible = false;
+    let typing = false;
+    const update = () => {
+      const show = pastHero && !finalVisible && !typing;
+      bar.dataset.visible = String(show);
+      bar.setAttribute('aria-hidden', String(!show));
+      links.forEach((a) => (show ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
+    };
+    const heroCta = document.querySelector('[data-fv-cta]');
+    if (heroCta) {
+      new IntersectionObserver(([e]) => {
+        pastHero = !e.isIntersecting && e.boundingClientRect.top < 0;
+        update();
+      }).observe(heroCta);
+    } else {
+      const onScroll = () => { pastHero = window.scrollY > 320; update(); };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+    const finalCta = document.querySelector('[data-final-cta]');
+    if (finalCta) {
+      new IntersectionObserver(([e]) => { finalVisible = e.isIntersecting; update(); }).observe(finalCta);
+    }
+    document.addEventListener('focusin', (e) => {
+      const t = e.target as HTMLElement;
+      typing = t.matches('input, textarea, select');
+      update();
+    });
+    document.addEventListener('focusout', () => { typing = false; update(); });
+  }
+</script>

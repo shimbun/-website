@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ColumnCard from '../../components/ColumnCard.astro';
+import FinalCta from '../../components/FinalCta.astro';
+import { columnCategories } from '../../data/columnCategories';
+const posts = (await getCollection('columns', (c) => !c.data.draft)).sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const crumbs = [{ label: '中学受験コラム' }];
+---
+<BaseLayout
+  title="中学受験コラム｜保護者の悩みに答える｜COMPASS"
+  description="塾選び・転塾、成績と勉強法、志望校・併願、家庭学習、保護者の関わり方など、中学受験の悩みを整理するためのコラムです。"
+  pageType="column"
+  crumbs={crumbs}
+>
+  <PageHeader title="中学受験コラム" eyebrow="COLUMN" crumbs={crumbs}
+    summary="中学受験で多くのご家庭が迷うポイントを、第三者の視点で整理したコラムです。" />
+  <section class="section">
+    <div class="container">
+      <nav aria-label="カテゴリ">
+        <ul class="toc">{columnCategories.map((c) => <li><a href={`/column/category/${c.slug}/`}>{c.name}</a></li>)}</ul>
+      </nav>
+      <div class="grid grid--3">{posts.map((p) => <ColumnCard entry={p} />)}</div>
+    </div>
+  </section>
+  <FinalCta />
+</BaseLayout>

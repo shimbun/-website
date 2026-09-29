@@ -1,0 +1,23 @@
+---
+import type { Consultant } from '../data/consultants';
+interface Props { c: Consultant; detail?: boolean }
+const { c, detail = false } = Astro.props;
+---
+<article class="card consultant">
+  <div class="avatar">
+    {c.photo ? <img src={c.photo} alt={`${c.name}の写真`} width="160" height="160" loading="lazy" /> : <span aria-hidden="true">C</span>}
+  </div>
+  <div>
+    <p class="consultant__role">{c.role}</p>
+    <h3>{c.name}</h3>
+    <p>{c.message}</p>
+    {detail && (
+      <dl>
+        <dt>経歴</dt><dd><ul>{c.career.map((x) => <li>{x}</li>)}</ul></dd>
+        <dt>得意な相談</dt><dd>{c.specialties.join('／')}</dd>
+        <dt>資格</dt><dd>{c.qualifications.join('／')}</dd>
+        <dt>大切にしていること</dt><dd>{c.values}</dd>
+      </dl>
+    )}
+  </div>
+</article>

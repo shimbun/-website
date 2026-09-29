@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import FaqList from '../components/FaqList.astro';
+import NextSteps from '../components/NextSteps.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { faqGroups } from '../data/faq';
+const crumbs = [{ label: 'よくある質問' }];
+// 【要確認】を含む回答は構造化データに載せない
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqGroups.flatMap((g) => g.items).filter((f) => !f.a.includes('【要確認')).map((f) => ({
+    '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+<BaseLayout
+  title="よくある質問｜中学受験の相談について｜COMPASS"
+  description="相談の対象学年、相談方法、料金、塾との関係、個人情報の扱いなど、COMPASSへのご相談に関するよくある質問をまとめました。"
+  pageType="faq"
+  crumbs={crumbs}
+  jsonLd={[faqLd]}
+>
+  <PageHeader title="よくある質問" eyebrow="FAQ" crumbs={crumbs}
+    summary="ご相談の前によくいただく質問をまとめました。ここにない疑問も、お申し込みフォームのご相談内容欄にお気軽にお書きください。" />
+  <section class="section">
+    <div class="container container--text">
+      <nav aria-label="質問のカテゴリ">
+        <ul class="toc">{faqGroups.map((g) => <li><a href={`#${g.id}`}>{g.title}</a></li>)}</ul>
+      </nav>
+      {faqGroups.map((g) => (
+        <section class="faq-group" id={g.id} aria-labelledby={`${g.id}-title`}>
+          <h2 id={`${g.id}-title`} class="section-title">{g.title}</h2>
+          <FaqList items={g.items} />
+        </section>
+      ))}
+    </div>
+  </section>
+  <NextSteps links={[{ href: '/price/', label: '料金' }, { href: '/flow/', label: 'ご相談の流れ' }]} />
+  <FinalCta />
+</BaseLayout>

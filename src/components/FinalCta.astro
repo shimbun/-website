@@ -1,0 +1,24 @@
+---
+import CtaButton from './CtaButton.astro';
+import { site } from '../config/site';
+import { getPlan } from '../data/pricing';
+
+/** 最終CTA（全ページ共通） */
+interface Props { title?: string; lead?: string; topic?: string }
+const {
+  title = '一人で悩む前に、まずはご相談ください。',
+  lead = '迷っている段階でのご相談も歓迎しています。今の状況をお聞かせいただくところから始めましょう。',
+  topic,
+} = Astro.props;
+const single = getPlan('single');
+---
+<section class="section final-cta" data-final-cta data-section="final_cta" aria-labelledby="final-cta-title">
+  <div class="container container--text">
+    <p class="eyebrow">CONSULTATION</p>
+    <h2 id="final-cta-title">{title}</h2>
+    <p>{lead}</p>
+    <p class="cta-next">お申し込み後、{site.consultation.replyWithin}に日程調整のご連絡をします。</p>
+    <CtaButton location="final" size="lg" topic={topic} />
+    <p class="cta-note">相談料 {single.price}／{single.duration}<br />{site.noHardSellNote}</p>
+  </div>
+</section>

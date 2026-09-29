@@ -1,0 +1,239 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaButton from '../components/CtaButton.astro';
+import Icon from '../components/Icon.astro';
+import HeroCompass from '../components/HeroCompass.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import PlanCard from '../components/PlanCard.astro';
+import FaqList from '../components/FaqList.astro';
+import FlowSteps from '../components/FlowSteps.astro';
+import ConsultantCard from '../components/ConsultantCard.astro';
+import CaseCard from '../components/CaseCard.astro';
+import VoiceCard from '../components/VoiceCard.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { site, cta } from '../config/site';
+import { services } from '../data/services';
+import { plans, getPlan } from '../data/pricing';
+import { topFaqs } from '../data/faq';
+import { consultants } from '../data/consultants';
+
+const cases = (await getCollection('cases', (e) => e.data.consent)).slice(0, 3);
+const voices = (await getCollection('voices', (e) => e.data.consent)).slice(0, 3);
+const single = getPlan('single');
+
+const worries = [
+  '中学受験をするかどうか、決めきれない',
+  '今の塾のままでいいのか不安',
+  '成績が伸びず、原因が分からない',
+  '志望校の選び方が分からない',
+  '家庭学習をどう見ればいいか分からない',
+  '塾に相談しても、塾の立場からの答えになりがち',
+  '転塾するかどうか迷っている',
+  '親自身が中学受験に詳しくない',
+];
+const topics = ['塾選び', '志望校選び', '成績', '勉強方法', '学習計画', '家庭学習', '模試結果', '過去問', '併願校', '転塾', '家庭教師', '保護者の悩み'];
+const values = [
+  { t: '特定の塾や教材を前提にしない', d: '今通っている塾を続けることも、変えることも、同じように選択肢として考えます。' },
+  { t: 'まず、じっくりお話を聞く', d: '結論を急がず、お子さまの様子とご家庭の考えを伺うところから始めます。' },
+  { t: '分かる言葉で説明する', d: '受験の専門用語はなるべく使わず、使うときは意味からお伝えします。' },
+  { t: 'ご家庭の方針とお子さまの性格を尊重する', d: '「一般的な正解」ではなく、ご家庭にとって納得できる進め方を一緒に考えます。' },
+  { t: '合格を約束するのではなく、判断材料を増やす', d: '合否をお約束することはできません。その代わり、迷ったときに判断できる材料と視点をお渡しします。' },
+];
+---
+<BaseLayout
+  title="中学受験の相談ならCOMPASS｜第三者のセカンドオピニオン"
+  description="塾選び・成績・志望校・転塾など、中学受験の悩みを塾とは別の第三者の立場から整理し、ご家庭に合った進め方をご提案します。まずはお気軽にご相談ください。"
+  pageType="top"
+>
+  <!-- 1. ファーストビュー -->
+  <section class="hero" data-section="fv" aria-labelledby="hero-title">
+    <HeroCompass />
+    <div class="container hero__inner">
+      <p class="hero__label">{site.tagline}</p>
+      <h1 id="hero-title">
+        中学受験、<br />誰に相談していますか？
+        <span class="hero__sub-catch">塾でも家族でもない、第三者という選択肢。</span>
+      </h1>
+      <p class="hero__lead">
+        塾選び、志望校、成績、家庭学習。<br />
+        今の進め方が本当にお子さまに合っているのか、中学受験に詳しい第三者の立場から、一緒に整理します。
+        <span class="visually-hidden">{site.name}</span>
+      </p>
+      <div class="hero__actions">
+        <span data-fv-cta><CtaButton location="fv" size="lg" /></span>
+        <a href="/about/" class="text-link">COMPASSについて詳しく見る<Icon name="arrow" /></a>
+      </div>
+      <ul class="hero__notes">
+        <li><Icon name="check" /><span>対象：{site.target}</span></li>
+        <li><Icon name="check" /><span>相談形式：{site.consultation.format}</span></li>
+        <li><Icon name="check" /><span>相談料：{single.price}／{single.duration}</span></li>
+        <li><Icon name="check" /><span>{site.noHardSellNote}</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 2. お悩み -->
+  <section class="section" data-section="worries" aria-labelledby="worries-title">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <p class="eyebrow">WORRIES</p>
+        <h2 id="worries-title" class="section-title">こんなことで、迷っていませんか。</h2>
+        <p class="section-lead">中学受験には、正解がひとつではない判断がたくさんあります。多くのご家庭が、同じようなところで立ち止まっています。</p>
+      </div>
+      <ul class="checklist">
+        {worries.map((w) => <li><Icon name="checkCircle" /><span>{w}</span></li>)}
+      </ul>
+      <p class="center mt-2">ひとつでも当てはまれば、COMPASSにご相談ください。</p>
+    </div>
+  </section>
+
+  <!-- 3. 第三者だからできること -->
+  <section class="section section--navy" data-section="third_party" aria-labelledby="third-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">SECOND OPINION</p>
+        <h2 id="third-title" class="section-title">塾でも家族でもない、<br />第三者だから言えること。</h2>
+        <p class="section-lead">塾の先生は、塾のカリキュラムの中で最善を考えます。ご家族は、お子さまを一番近くで見ています。COMPASSは、そのどちらとも違う「外側」の立場から、状況を客観的に整理します。</p>
+      </div>
+      <ol class="points grid grid--3">
+        <li><h3>特定の塾・学校に偏らない</h3><p>転塾する・しない、どちらの結論もありえます。今の選択を点検するための意見をお伝えします。</p></li>
+        <li><h3>資料を横断して見る</h3><p>塾の成績資料や模試の結果、家庭学習の様子をまとめて見て、課題の優先順位をつけます。</p></li>
+        <li><h3>ご家庭の方針から考える</h3><p>偏差値だけでなく、お子さまの性格やご家庭の価値観を起点に進め方を考えます。</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. COMPASSとは -->
+  <section class="section section--white" data-section="about" aria-labelledby="about-title">
+    <div class="container container--text">
+      <p class="eyebrow">ABOUT</p>
+      <h2 id="about-title" class="section-title">COMPASSは、中学受験の<br />「セカンドオピニオン」です。</h2>
+      <p>医療で主治医とは別の医師に意見を聞くように、中学受験でも、今の塾や学習方法とは別の視点から意見を聞く。COMPASSは、今の環境を否定するのではなく、ご家庭がより納得して進むための相談先です。</p>
+      <p>授業は行いません。塾や家庭教師と並行してご利用いただくことを前提にしています。</p>
+      <a href="/about/" class="text-link">COMPASSの考え方を詳しく見る<Icon name="arrow" /></a>
+    </div>
+  </section>
+
+  <!-- 5. 相談できること -->
+  <section class="section" data-section="topics" aria-labelledby="topics-title">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <p class="eyebrow">SERVICES</p>
+        <h2 id="topics-title" class="section-title">中学受験のことなら、どんなことでも。</h2>
+        <p class="section-lead">「こんなことを聞いていいのかな」ということこそ、ご相談ください。</p>
+      </div>
+      <ul class="topics" aria-label="ご相談いただけるテーマ">
+        {topics.map((t) => <li>{t}</li>)}
+      </ul>
+      <div class="grid grid--3">
+        {services.map((s) => <ServiceCard service={s} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 大切にしていること -->
+  <section class="section section--mist" data-section="reasons" aria-labelledby="values-title">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <p class="eyebrow">OUR VALUES</p>
+        <h2 id="values-title" class="section-title">COMPASSが大切にしていること</h2>
+        <p class="section-lead">実績を並べるよりも、私たちがご相談で大切にしている姿勢をお伝えします。</p>
+      </div>
+      <ol class="points grid grid--2-wide">
+        {values.map((v) => <li><h3>{v.t}</h3><p>{v.d}</p></li>)}
+      </ol>
+      <div class="center mt-2">
+        <a href="/price/" class="btn btn--secondary" data-cta="mid_values">{cta.mid}<Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 支援事例（掲載許諾のある事例がある場合のみ表示） -->
+  {cases.length > 0 && (
+    <section class="section" data-section="cases" aria-labelledby="cases-title">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <p class="eyebrow">CASES</p>
+          <h2 id="cases-title" class="section-title">ご相談の一例をご紹介します。</h2>
+          <p class="section-lead">ご家庭が特定されないよう、内容を一部変更しています。</p>
+        </div>
+        <div class="grid grid--3">{cases.map((c) => <CaseCard entry={c} />)}</div>
+        <p class="center mt-2"><a href="/cases/" class="text-link">支援事例をもっと見る<Icon name="arrow" /></a></p>
+      </div>
+    </section>
+  )}
+
+  <!-- 8. コンサルタント -->
+  {consultants.length > 0 && (
+    <section class="section section--parchment" data-section="consultant" aria-labelledby="consultant-title">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <p class="eyebrow">CONSULTANT</p>
+          <h2 id="consultant-title" class="section-title">ご相談を担当するコンサルタント</h2>
+          <p class="section-lead">どんな人が話を聞くのかは、相談する前に一番気になるところだと思います。</p>
+        </div>
+        {consultants.map((c) => <ConsultantCard c={c} />)}
+        <p class="center mt-2"><a href="/consultants/" class="text-link">経歴と考え方を詳しく見る<Icon name="arrow" /></a></p>
+      </div>
+    </section>
+  )}
+
+  <!-- 9. お客様の声（掲載許諾のある声がある場合のみ表示） -->
+  {voices.length > 0 && (
+    <section class="section" data-section="voice" aria-labelledby="voices-title">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <p class="eyebrow">VOICES</p>
+          <h2 id="voices-title" class="section-title">ご相談いただいた保護者の方の声</h2>
+        </div>
+        <div class="grid grid--3">{voices.map((v) => <VoiceCard entry={v} />)}</div>
+        <p class="center mt-2"><a href="/voices/" class="text-link">お客様の声をもっと見る<Icon name="arrow" /></a></p>
+      </div>
+    </section>
+  )}
+
+  <!-- 10. 料金 -->
+  <section class="section section--white" data-section="pricing" aria-labelledby="price-title">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <p class="eyebrow">PRICE</p>
+        <h2 id="price-title" class="section-title">料金について</h2>
+        <p class="section-lead">料金はすべて公開しています。ご相談の内容や頻度に合わせてお選びいただけます。</p>
+      </div>
+      <div class="grid grid--2">{plans.map((p) => <PlanCard plan={p} showCta={false} />)}</div>
+      <p class="center mt-2"><a href="/price/" class="text-link">料金の詳細・お支払い方法を見る<Icon name="arrow" /></a></p>
+    </div>
+  </section>
+
+  <!-- 11. 利用の流れ -->
+  <section class="section" data-section="flow" aria-labelledby="flow-title">
+    <div class="container container--text">
+      <div class="section-head">
+        <p class="eyebrow">FLOW</p>
+        <h2 id="flow-title" class="section-title">ご相談の流れ</h2>
+        <p class="section-lead">お申し込みから継続支援まで、5つのステップで進みます。1回のご相談だけでも大丈夫です。</p>
+      </div>
+      <FlowSteps />
+      <div class="center mt-2">
+        <p class="cta-next">まずはフォームから、お子さまの学年とご相談したいことをお送りください。</p>
+        <CtaButton location="mid_flow" size="lg" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. FAQ -->
+  <section class="section section--mist" data-section="faq" aria-labelledby="faq-title">
+    <div class="container container--text">
+      <div class="section-head section-head--center">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-title" class="section-title">よくあるご質問</h2>
+      </div>
+      <FaqList items={topFaqs} />
+      <p class="center mt-2"><a href="/faq/" class="text-link">よくあるご質問をすべて見る<Icon name="arrow" /></a></p>
+    </div>
+  </section>
+
+  <!-- 13. 最終CTA -->
+  <FinalCta />
+</BaseLayout>

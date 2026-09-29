@@ -153,7 +153,7 @@
 | Compass Navy | `#1E2F4D` | 見出し・ナビ・フッター（白に13.38:1） |
 | Mist Blue | `#EEF2F7` | 淡色セクション背景 |
 | Brass | `#C9A866` | 装飾専用（白背景の文字には使用禁止） |
-| Brass Deep | `#8A6A2F` | 白背景上の真鍮色テキスト（5.02:1） |
+| Brass Deep | `#7A5C24` | 真鍮色テキスト（白6.21:1／Parchment 5.24:1）※実装時に axe 指摘で #8A6A2F から変更 |
 | **Needle Terracotta** | `#A8431F` | **主CTA専用**（白文字6.02:1）／hover `#8E3718` |
 | Ivory | `#FAF7F1` | ページ背景 |
 | Parchment | `#F3EBDC` | 声・コンサルタント背景 |
@@ -517,3 +517,23 @@ sitemap.xml 自動生成、robots.txt、canonical、OGP（ページ別画像）�
 1. **ユーザー確認**：本仕様書の方針承認、第12章の確認事項（まず最優先の1〜8）への回答
 2. 承認後、M0/M1に着手（Astroプロジェクト作成、デザイントークン、レイアウト、CI）
 3. 回答が揃い次第、コピーの【要確認】を確定し、法務文書のドラフトを作成（公開前に弁護士レビュー）
+
+---
+
+## 付録：実装メモ（v1.0 実装時の判断・仕様との差分）
+
+| 項目 | 仕様 | 実装 | 理由・今後 |
+|---|---|---|---|
+| CMS | microCMS | **当面は Markdown / TypeScript データファイル**（`src/content/`, `src/data/`） | アカウント・予算が未確定のため。ページは `astro:content` 経由で取得しており、microCMS 移行時もページ側の変更は最小限 |
+| 見出しフォント | Shippori Mincho サブセット | システム明朝（ヒラギノ明朝・游明朝）→ 無ければゴシック | 外部フォント0でLCPを優先。必要ならサブセット導入を検討 |
+| Brass Deep | `#8A6A2F` | `#7A5C24` | 淡色背景上でコントラスト不足（axe 検出）のため |
+| PCナビのサービス | ドロップダウン | `/services/` へのリンク（スマホメニューは6サービスを展開表示） | JSを増やさないため。必要なら追加 |
+| 確認画面 | `/consultation/confirm/` | 同一ページ内のステップ切替（入力→確認） | 入力内容を URL・サーバに残さないため |
+| 広告/SNS用LP | `/lp/{name}/` | 未作成（sitemap 除外設定のみ） | 広告出稿方針の確定後に作成 |
+| 【要確認】 | 確認前は掲載しない | プレースホルダとして表示し、`npm run check:release` が失敗 | 確認前の情報を本番に出さない安全装置。staging では黄色でハイライト |
+
+### 実装時点の品質結果（staging / production ビルド）
+- Lighthouse（モバイル・production ビルド）：TOP・料金とも Performance / Accessibility / Best Practices / SEO すべて 100
+- axe（WCAG 2.2 AA）：主要18ページ × モバイル/デスクトップで違反 0
+- E2E：CTA導線、フォーム（入力→確認→送信→完了、送信失敗時の再送）、`generate_lead` 1回のみ・個人情報を含まない、メニュー、固定CTA、FAQ、404
+- コンテンツ検査：NG表現 0、「無料」表記 0、内部リンク切れ 0、全ページ title/description/canonical/OGP/h1

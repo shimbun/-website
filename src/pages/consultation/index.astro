@@ -1,0 +1,194 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../config/site';
+import { getPlan } from '../../data/pricing';
+
+const crumbs = [{ label: 'ご相談のお申し込み' }];
+const single = getPlan('single');
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+
+const grades = ['未就学', '小1', '小2', '小3', '小4', '小5', '小6', 'その他'];
+const topics = [
+  { v: 'strategy', l: '受験するかどうか・全体の進め方' },
+  { v: 'juku', l: '塾選び・転塾' },
+  { v: 'study', l: '成績・勉強方法' },
+  { v: 'school-selection', l: '志望校・併願校' },
+  { v: 'home-study', l: '家庭学習・学習計画' },
+  { v: 'mock', l: '模試・過去問' },
+  { v: 'continuous', l: '継続的に相談したい' },
+  { v: 'other', l: 'その他・まだ分からない' },
+];
+---
+<BaseLayout
+  title="ご相談のお申し込み｜中学受験について相談する｜COMPASS"
+  description="中学受験のご相談はこちらからお申し込みいただけます。お子さまの学年とご相談したいことをお知らせください。入力は約2分で完了します。"
+  pageType="booking"
+  crumbs={crumbs}
+  sticky={false}
+  minimalHeader
+>
+  <PageHeader title="ご相談のお申し込み" eyebrow="CONSULTATION" crumbs={crumbs}
+    summary={`以下のフォームに入力してお送りください。内容を確認のうえ、${site.consultation.replyWithin}にメールでご連絡し、日程を調整します。`} />
+
+  <section class="section">
+    <div class="container container--text">
+      <ol class="form-steps" aria-label="お申し込みの手順">
+        <li data-step-indicator="1" aria-current="step">入力</li>
+        <li data-step-indicator="2">確認</li>
+        <li data-step-indicator="3">完了</li>
+      </ol>
+
+      <ul class="assurance">
+        <li><Icon name="checkCircle" /><span>入力は約2分。必須は5項目だけです。</span></li>
+        <li><Icon name="checkCircle" /><span>相談内容がまとまっていなくても大丈夫です。</span></li>
+        <li><Icon name="checkCircle" /><span>相談料 {single.price}／{single.duration}</span></li>
+        <li><Icon name="checkCircle" /><span>{site.noHardSellNote}</span></li>
+      </ul>
+
+      <div class="form-panel">
+        <div data-error-summary hidden tabindex="-1" class="error-summary" role="alert">
+          <h2>入力内容をご確認ください</h2>
+          <ul data-error-list></ul>
+        </div>
+        <div data-submit-error hidden class="alert" role="alert"></div>
+
+        <form class="form" method="post" action="/api/consultation" novalidate data-consultation-form>
+          <input type="hidden" name="form_type" value="booking" />
+          <input type="hidden" name="landing_page" value="" />
+          <input type="hidden" name="utm" value="" />
+          <input type="hidden" name="cta_location" value="" />
+          <div class="hp-field" aria-hidden="true">
+            <label>この欄は入力しないでください<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <input type="hidden" name="started_at" value="" />
+
+          <div data-step="input" class="form">
+            <div class="field" data-field="name">
+              <label for="f-name">保護者の方のお名前 <span class="badge badge--req">必須</span></label>
+              <input id="f-name" class="input" type="text" name="name" autocomplete="name" required maxlength="50" placeholder="例）山田 花子" aria-describedby="f-name-err" />
+              <p class="field__error" id="f-name-err"><Icon name="alert" />お名前を入力してください</p>
+            </div>
+
+            <div class="field" data-field="email">
+              <label for="f-email">メールアドレス <span class="badge badge--req">必須</span></label>
+              <p class="field__hint" id="f-email-hint">日程調整のご連絡をこちらにお送りします。</p>
+              <input id="f-email" class="input" type="email" name="email" inputmode="email" autocomplete="email" required maxlength="254" placeholder="例）name@example.com" aria-describedby="f-email-hint f-email-err" />
+              <p class="field__error" id="f-email-err"><Icon name="alert" />メールアドレスの形式をご確認ください（例：name@example.com）</p>
+            </div>
+
+            <fieldset class="field" data-field="grade" aria-describedby="f-grade-err">
+              <legend>お子さまの学年 <span class="badge badge--req">必須</span></legend>
+              <div class="choices">
+                {grades.map((g) => (
+                  <label class="choice"><input type="radio" name="grade" value={g} required /><span>{g}</span></label>
+                ))}
+              </div>
+              <p class="field__error" id="f-grade-err"><Icon name="alert" />お子さまの学年を選択してください</p>
+            </fieldset>
+
+            <fieldset class="field" data-field="topics" aria-describedby="f-topics-hint f-topics-err">
+              <legend>ご相談したいこと <span class="badge badge--req">必須</span></legend>
+              <p class="field__hint" id="f-topics-hint">当てはまるものをすべてお選びください（複数選択可）。</p>
+              <div class="choices choices--wide">
+                {topics.map((t) => (
+                  <label class="choice"><input type="checkbox" name="topics" value={t.v} /><span>{t.l}</span></label>
+                ))}
+              </div>
+              <p class="field__error" id="f-topics-err"><Icon name="alert" />ご相談したいことを1つ以上選択してください</p>
+            </fieldset>
+
+            {site.consultation.inPerson && (
+              <fieldset class="field" data-field="format">
+                <legend>ご希望の相談形式 <span class="badge badge--opt">任意</span></legend>
+                <div class="choices">
+                  <label class="choice"><input type="radio" name="format" value="オンライン" /><span>オンライン</span></label>
+                  <label class="choice"><input type="radio" name="format" value="対面" /><span>対面</span></label>
+                </div>
+              </fieldset>
+            )}
+
+            <details class="optional-fields">
+              <summary>もう少し詳しく伝える（任意）</summary>
+              <div class="form" style="margin-top:1.25rem">
+                <div class="field">
+                  <label for="f-message">現在の状況やご相談内容 <span class="badge badge--opt">任意</span></label>
+                  <p class="field__hint" id="f-message-hint">箇条書きや一言でも大丈夫です。お子さまのお名前や、健康に関わる情報のご記入は不要です。</p>
+                  <textarea id="f-message" class="textarea" name="message" maxlength="1000" aria-describedby="f-message-hint"></textarea>
+                </div>
+                <div class="field">
+                  <label for="f-kana">ふりがな <span class="badge badge--opt">任意</span></label>
+                  <input id="f-kana" class="input" type="text" name="kana" maxlength="50" placeholder="例）やまだ はなこ" />
+                </div>
+                <div class="field">
+                  <label for="f-tel">電話番号 <span class="badge badge--opt">任意</span></label>
+                  <p class="field__hint" id="f-tel-hint">メールが届かない場合にのみ使用します。</p>
+                  <input id="f-tel" class="input" type="tel" name="tel" inputmode="tel" autocomplete="tel" maxlength="20" aria-describedby="f-tel-hint" />
+                </div>
+                <fieldset class="field">
+                  <legend>現在の通塾状況 <span class="badge badge--opt">任意</span></legend>
+                  <div class="choices">
+                    {['通っている', '検討中', '通っていない'].map((v) => (
+                      <label class="choice"><input type="radio" name="juku_status" value={v} /><span>{v}</span></label>
+                    ))}
+                  </div>
+                </fieldset>
+                <div class="field">
+                  <label for="f-source">COMPASSを知ったきっかけ <span class="badge badge--opt">任意</span></label>
+                  <select id="f-source" class="select" name="source">
+                    <option value="">選択してください</option>
+                    <option>検索（Google・Yahoo!など）</option>
+                    <option>Instagram</option>
+                    <option>X（旧Twitter）</option>
+                    <option>YouTube</option>
+                    <option>LINE</option>
+                    <option>知人・友人の紹介</option>
+                    <option>その他</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+
+            <div class="field" data-field="consent">
+              <label class="consent">
+                <input type="checkbox" name="consent" value="yes" required aria-describedby="f-consent-err" />
+                <span><a href="/privacy/" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します <span class="badge badge--req">必須</span></span>
+              </label>
+              <p class="field__error" id="f-consent-err"><Icon name="alert" />プライバシーポリシーへの同意が必要です</p>
+            </div>
+            <p class="small muted" style="margin:0">ご入力いただいた情報は、ご相談への対応とご連絡のためにのみ利用します。</p>
+
+            {turnstileKey && <div class="cf-turnstile" data-sitekey={turnstileKey} data-size="flexible"></div>}
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary btn--lg" data-to-confirm>入力内容を確認する</button>
+            </div>
+          </div>
+
+          <div data-step="confirm" hidden>
+            <h2 class="section-title" tabindex="-1" data-confirm-title>入力内容のご確認</h2>
+            <p>以下の内容でお申し込みします。よろしければ「この内容で申し込む」を押してください。</p>
+            <dl class="confirm-list" data-confirm-list></dl>
+            <div class="form-actions">
+              <button type="button" class="btn btn--secondary" data-back>修正する</button>
+              <button type="button" class="btn btn--primary btn--lg" data-submit>この内容で申し込む</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <p class="small muted mt-1">取材・法人の方など、ご相談以外のお問い合わせは<a href="/contact/">こちら</a>。</p>
+    </div>
+  </section>
+</BaseLayout>
+
+{turnstileKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
+<style>
+  .optional-fields summary { cursor: pointer; font-weight: 700; color: var(--navy); padding: 0.75rem 0; min-height: 44px; }
+</style>
+
+<script>
+  import { initConsultationForm } from '../../scripts/consultation-form';
+  initConsultationForm();
+</script>

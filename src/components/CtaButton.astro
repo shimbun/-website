@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro';
+import { cta, CONSULTATION_PATH } from '../config/site';
+
+/**
+ * 主CTA。文言は src/config/site.ts の cta で一括管理（仕様書 5-4）。
+ * location は GA4 cta_click の cta_location パラメータ。
+ */
+interface Props {
+  location: string;
+  label?: string;
+  size?: 'md' | 'lg';
+  variant?: 'primary' | 'secondary';
+  href?: string;
+  block?: boolean;
+  topic?: string;
+}
+const { location, label, size = 'md', variant = 'primary', href, block = false, topic } = Astro.props;
+const text = label ?? cta.primary;
+const url = href ?? (topic ? `${CONSULTATION_PATH}?topic=${topic}` : CONSULTATION_PATH);
+---
+<a
+  href={url}
+  class:list={['btn', `btn--${variant}`, { 'btn--lg': size === 'lg', 'btn--block': block }]}
+  data-cta={location}
+>
+  <span>{text}</span>
+  <Icon name="arrow" />
+</a>

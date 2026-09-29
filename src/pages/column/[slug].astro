@@ -1,0 +1,86 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import CtaButton from '../../components/CtaButton.astro';
+import ColumnCard from '../../components/ColumnCard.astro';
+import FinalCta from '../../components/FinalCta.astro';
+import { getCategory } from '../../data/columnCategories';
+import { getService } from '../../data/services';
+import { consultants } from '../../data/consultants';
+import { cta, site } from '../../config/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('columns', (c) => !c.data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+const { post } = Astro.props as { post: CollectionEntry<'columns'> };
+const { Content, headings } = await render(post);
+const d = post.data;
+const category = getCategory(d.category)!;
+const service = getService(d.service)!;
+const author = consultants.find((c) => c.slug === d.author);
+const related = (await getCollection('columns', (c) => !c.data.draft && c.id !== post.id && c.data.category === d.category)).slice(0, 3);
+const fmt = (x: Date) => x.toISOString().slice(0, 10).replaceAll('-', '.');
+const crumbs = [{ label: '中学受験コラム', href: '/column/' }, { label: category.name, href: `/column/category/${category.slug}/` }, { label: d.title }];
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.description,
+  datePublished: d.publishedAt.toISOString(),
+  dateModified: (d.updatedAt ?? d.publishedAt).toISOString(),
+  publisher: { '@type': 'Organization', name: site.name },
+  ...(author && !author.name.includes('【要確認') ? { author: { '@type': 'Person', name: author.name } } : {}),
+  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+};
+const toc = headings.filter((h) => h.depth === 2);
+---
+<BaseLayout title={`${d.title}｜COMPASS`} description={d.description} pageType="column" crumbs={crumbs} jsonLd={[articleLd]} ogType="article">
+  <PageHeader title={d.title} eyebrow={category.name} crumbs={crumbs}>
+    <div class="article-meta">
+      <span>公開日：<time datetime={d.publishedAt.toISOString()}>{fmt(d.publishedAt)}</time></span>
+      {d.updatedAt && <span>更新日：<time datetime={d.updatedAt.toISOString()}>{fmt(d.updatedAt)}</time></span>}
+      {author && <span>執筆・監修：{author.name}</span>}
+    </div>
+  </PageHeader>
+  <article class="section">
+    <div class="container container--text">
+      {toc.length > 2 && (
+        <nav class="card" aria-label="目次">
+          <p class="small"><strong>この記事の内容</strong></p>
+          <ol class="small" style="margin:0">{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+        </nav>
+      )}
+      <div class="prose mt-2"><Content /></div>
+
+      <aside class="service-box" aria-labelledby="svc-box-title">
+        <p class="eyebrow">COMPASSにできること</p>
+        <h2 id="svc-box-title">{service.name}</h2>
+        <p>{service.catch} {service.lead}</p>
+        <CtaButton location="column_end" label={cta.topic(service.name.replace('中学受験 ', ''))} topic={service.slug} />
+        <p class="small mt-1"><a href={`/services/${service.slug}/`} style="color:#fff">サービス内容を詳しく見る</a></p>
+      </aside>
+
+      {author && (
+        <div class="author-box">
+          <div class="avatar" aria-hidden="true">C</div>
+          <div>
+            <p class="small muted" style="margin:0">この記事の執筆・監修</p>
+            <p style="margin:0"><strong>{author.name}</strong>（{author.role}）</p>
+            <p class="small" style="margin:.25rem 0 0"><a href="/consultants/">プロフィールを見る</a>／<a href="/editorial-policy/">コンテンツ制作方針</a></p>
+          </div>
+        </div>
+      )}
+    </div>
+  </article>
+  {related.length > 0 && (
+    <section class="section section--white">
+      <div class="container">
+        <h2 class="section-title">あわせて読みたい</h2>
+        <div class="grid grid--3">{related.map((r) => <ColumnCard entry={r} />)}</div>
+      </div>
+    </section>
+  )}
+  <FinalCta topic={service.slug} />
+</BaseLayout>

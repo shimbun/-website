@@ -1,0 +1,17 @@
+---
+import Icon from './Icon.astro';
+import CtaButton from './CtaButton.astro';
+
+/** 全ページ末尾の「次のステップ」ブロック（仕様書 4-4） */
+interface Props { links: { href: string; label: string }[] }
+const { links } = Astro.props;
+---
+<section class="section next-steps" aria-labelledby="next-steps-title">
+  <div class="container">
+    <h2 id="next-steps-title" class="section-title">次に読むと良いページ</h2>
+    <ul class="next-steps__links">
+      {links.map((l) => <li><a href={l.href}><span>{l.label}</span><Icon name="arrow" /></a></li>)}
+    </ul>
+    <div class="center"><CtaButton location="next_steps" /></div>
+  </div>
+</section>

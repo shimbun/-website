@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import FlowSteps from '../components/FlowSteps.astro';
+import NextSteps from '../components/NextSteps.astro';
+import FinalCta from '../components/FinalCta.astro';
+import { site } from '../config/site';
+const crumbs = [{ label: 'ご相談の流れ' }];
+---
+<BaseLayout
+  title="ご相談の流れ｜中学受験の相談の進め方｜COMPASS"
+  description="COMPASSへのご相談は、お申し込み・ヒアリング・分析・戦略のご提案・継続支援（ご希望の方のみ）の5ステップで進みます。1回のご相談だけでもご利用いただけます。"
+  pageType="flow"
+  crumbs={crumbs}
+>
+  <PageHeader title="ご相談の流れ" eyebrow="FLOW" crumbs={crumbs}
+    summary="お申し込みから継続支援まで、5つのステップで進みます。どの段階でも、無理に次へ進むことはありません。" />
+  <section class="section">
+    <div class="container container--text">
+      <FlowSteps />
+      <div class="card mt-2">
+        <h2 class="section-title" style="font-size:var(--fs-md)">ご相談前にご用意いただくと良いもの（任意）</h2>
+        <ul style="margin:0">
+          <li>直近の模試の結果（あれば数回分）</li>
+          <li>塾の成績表やクラス分けの資料</li>
+          <li>1週間の学習スケジュールのメモ</li>
+          <li>気になっていること・聞きたいことのメモ</li>
+        </ul>
+      </div>
+      <p class="small muted mt-1">相談形式：{site.consultation.format}／所要時間：{site.consultation.duration}</p>
+    </div>
+  </section>
+  <NextSteps links={[{ href: '/price/', label: '料金' }, { href: '/faq/', label: 'よくあるご質問' }]} />
+  <FinalCta />
+</BaseLayout>
